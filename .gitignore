@@ -1,0 +1,30 @@
+# Python 編譯與暫存檔
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.log
+
+# 虛擬環境
+venv/
+.env
+*.env
+
+# Jupyter Notebook checkpoint
+.ipynb_checkpoints
+
+# VSCode 設定（如果使用）
+.vscode/
+
+# 系統檔案
+.DS_Store
+Thumbs.db
+
+# Render 部署相關
+*.sqlite3
+notes/
+data/
+*.xlsx
+
+# 可選：不提交使用者上傳的檔案
+uploads/

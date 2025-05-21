@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>查詢班級成績</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0f172a;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    select, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.6rem;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f4f8;
+    }
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>查詢班級成績</h1>
+</header>
+
+<div class="container">
+  <form method="POST">
+    <label for="class_name">請選擇班級：</label>
+    <select name="class_name" id="class_name" required>
+      <option value="1A">1A</option>
+      <option value="2B">2B</option>
+      <option value="3C">3C</option>
+    </select>
+    <button type="submit">查詢</button>
+  </form>
+
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  {% if table_html %}
+    {{ table_html | safe }}
+  {% endif %}
+</div>
+
+</body>
+</html>
