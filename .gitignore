@@ -22,9 +22,9 @@ Thumbs.db
 
 # Render 部署相關
 *.sqlite3
-*notes/
-*data/
-*.xlsx
+#notes/
+#data/
+#.xlsx
 
 # 可選：不提交使用者上傳的檔案
 uploads/
