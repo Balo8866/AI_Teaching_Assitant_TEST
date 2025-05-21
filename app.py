@@ -41,17 +41,46 @@ def callback():
 
 # ➕ AI 辨識學生姓名函式
 def identify_student_name(message_text):
-    prompt = f"""以下是家長輸入的文字，請幫我判斷出這句話中提到的學生姓名（如果有）。只輸出學生全名，不要其他說明：
-輸入：「{message_text}」
-回答："""
+    # 從所有班級成績檔取得學生姓名清單
+    all_names = []
+    data_folder = "data"
+
+    for filename in os.listdir(data_folder):
+        if filename.endswith(".xlsx"):
+            filepath = os.path.join(data_folder, filename)
+            try:
+                df = pd.read_excel(filepath)
+                if "姓名" in df.columns:
+                    all_names.extend(df["姓名"].dropna().tolist())
+            except Exception as e:
+                print(f"[錯誤] 讀取 {filename} 時發生錯誤：{e}")
+
+    # 去除重複姓名
+    all_names = list(set(all_names))
+
+    # 建 AI Prompt，要求從名單中挑出最可能的學生姓名
+    prompt = f"""以下是家長的話語：「{message_text}」
+請從中找出提到的學生姓名。以下是已知的學生名單：
+{', '.join(all_names)}
+
+請只輸出其中一個存在的全名（若找不到就輸出「無」）：
+"""
 
     try:
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
         response = model.generate_content(prompt)
-        return response.text.strip()
+        name = response.text.strip()
+
+        # 回傳結果是否在名單中
+        if name in all_names:
+            return name
+        else:
+            return None
+
     except Exception as e:
         print("辨識學生姓名錯誤：", e)
         return None
+
 
 # 修改後的主邏輯
 @handler.add(MessageEvent, message=TextMessage)
@@ -62,7 +91,7 @@ def handle_message(event):
     name = identify_student_name(message_text)
 
     if not name:
-        reply = "請輸入包含學生姓名的句子，例如「王小明的學習狀況」。"
+        reply = "請輸入包含學生姓名的句子，例如「李小明的學習狀況」。"
     else:
         student_data = query_student(name)
         if isinstance(student_data, str) and "查無" in student_data:
