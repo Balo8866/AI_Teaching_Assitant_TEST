@@ -54,7 +54,16 @@ def identify_student_name(message_text):
             try:
                 df = pd.read_excel(filepath)
                 if "姓名" in df.columns:
-                    all_names.extend(df["姓名"].dropna().astype(str).tolist())
+                    all_names.extend(
+                    df["姓名"]
+                    .dropna()
+                    .astype(str)
+                    .str.replace("　", "")  # 移除全形空白
+                    .str.replace(" ", "")   # 移除半形空白
+                    .str.strip()
+                    .tolist()
+                )
+
             except Exception as e:
                 print(f"[錯誤] 讀取 {filename} 發生錯誤：{e}")
 
@@ -70,7 +79,12 @@ def identify_student_name(message_text):
     try:
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
         response = model.generate_content(prompt)
-        name_raw = response.text.strip()
+        name_raw = (
+        response.text
+            .replace("　", "")
+            .replace(" ", "")
+            .strip()
+        )
 
         # 模糊比對：找最接近的學生姓名
         matched = get_close_matches(name_raw, all_names, n=1, cutoff=0.6)
