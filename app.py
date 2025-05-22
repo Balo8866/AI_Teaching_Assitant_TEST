@@ -9,7 +9,7 @@ import google.generativeai as genai
 
 from datetime import date
 
-from utils.ai_response import generate_reply
+from utils.ai_response import generate_reply, analyze_question_with_data
 from utils.data_handler import query_student
 
 from difflib import get_close_matches
@@ -111,14 +111,15 @@ def handle_message(event):
     # 使用 AI 辨識名字
     name = identify_student_name(message_text)
 
-    if not name:
-        reply = "請輸入包含學生姓名的句子，例如「李小明的學習狀況」。"
-    else:
+    if name:
         student_data = query_student(name)
         if isinstance(student_data, str) and "查無" in student_data:
             reply = f"查無 {name} 的資料，請確認姓名是否正確。"
         else:
             reply = generate_reply(student_data)
+    else:
+        # 若辨識不到名字，改用「問題分析模式」
+        reply = analyze_question_with_data(message_text)
 
     line_bot_api.reply_message(
         event.reply_token,
