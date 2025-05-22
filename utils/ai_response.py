@@ -25,27 +25,40 @@ def generate_reply(student_data):
 
 def analyze_question_with_data(question_text):
     try:
-        # 整理所有 Excel 成績資料
+        # 🔍 1. 統整所有 Excel 成績
         all_scores = []
         for filename in os.listdir("data"):
             if filename.endswith(".xlsx"):
-                df = pd.read_excel(os.path.join("data", filename))
-                all_scores.append(df)
+                try:
+                    df = pd.read_excel(os.path.join("data", filename))
+                    all_scores.append(df)
+                except Exception as e:
+                    print(f"[警告] 讀取 {filename} 錯誤：{e}")
+
+        if not all_scores:
+            return "⚠️ 無法讀取任何成績資料，請確認 data/ 資料夾是否有正確 Excel 檔案。"
+
         merged_scores = pd.concat(all_scores, ignore_index=True)
         scores_text = merged_scores.to_string(index=False)
 
-        # 整理所有老師評語
+        # 🔍 2. 整理所有 txt 評語
         note_texts = []
-        if os.path.exists("notes"):
-            for note_file in os.listdir("notes"):
+        notes_dir = "notes"
+        if os.path.exists(notes_dir):
+            for note_file in os.listdir(notes_dir):
                 if note_file.endswith(".txt"):
-                    with open(os.path.join("notes", note_file), encoding="utf-8") as f:
-                        note_texts.append(f"【{note_file}】\n{f.read()}")
-        notes_combined = "\n\n".join(note_texts)
+                    try:
+                        with open(os.path.join(notes_dir, note_file), encoding="utf-8") as f:
+                            content = f.read().strip()
+                            note_texts.append(f"【{note_file}】\n{content}")
+                    except Exception as e:
+                        print(f"[警告] 讀取 {note_file} 錯誤：{e}")
 
-        # 建立 prompt
+        notes_combined = "\n\n".join(note_texts) if note_texts else "（無老師評語紀錄）"
+
+        # 🧠 3. 建立 Gemini 分析 Prompt
         prompt = f"""
-你是一位智慧型學習助理。請根據以下資料回答家長的提問：
+你是一位智慧型學習助理。請根據以下資料幫助回答家長的提問，並以清楚、親切的方式回覆。
 
 【家長提問】
 {question_text}
@@ -56,7 +69,7 @@ def analyze_question_with_data(question_text):
 【老師撰寫的學生評語】
 {notes_combined}
 
-請用清楚、親切的語氣回答問題，並盡量引用數據與觀察依據。
+請用條列或自然語句回答。
 """
 
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
@@ -64,5 +77,5 @@ def analyze_question_with_data(question_text):
         return response.text.strip()
 
     except Exception as e:
-        print("資料分析錯誤：", e)
-        return "目前系統在分析資料時發生錯誤，請稍後再試。"
+        print("❗ analyze_question_with_data 發生錯誤：", e)
+        return f"❗ 系統在分析資料時發生錯誤：{e}"
