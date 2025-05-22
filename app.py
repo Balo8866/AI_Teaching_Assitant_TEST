@@ -12,6 +12,9 @@ from datetime import date
 from utils.ai_response import generate_reply
 from utils.data_handler import query_student
 
+from difflib import get_close_matches
+
+
 # 載入 .env
 load_dotenv()
 
@@ -51,34 +54,33 @@ def identify_student_name(message_text):
             try:
                 df = pd.read_excel(filepath)
                 if "姓名" in df.columns:
-                    all_names.extend(df["姓名"].dropna().tolist())
+                    all_names.extend(df["姓名"].dropna().astype(str).tolist())
             except Exception as e:
-                print(f"[錯誤] 讀取 {filename} 時發生錯誤：{e}")
+                print(f"[錯誤] 讀取 {filename} 發生錯誤：{e}")
 
-    # 去除重複
-    all_names = list(set(all_names))
+    all_names = list(set(all_names))  # 去除重複
 
-    # 建 Prompt
+    # 建 AI Prompt
     prompt = f"""以下是家長的話語：「{message_text}」
-請從中找出提到的學生姓名。以下是已知的學生名單：
+請從中找出提到的學生姓名。以下是已知學生名單：
 {', '.join(all_names)}
-
-請只輸出其中一個存在的全名（若找不到就輸出「無」）：
+請只輸出其中一個姓名（若無則輸出「無」）：
 """
 
     try:
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
         response = model.generate_content(prompt)
-        name = response.text.strip()
+        name_raw = response.text.strip()
 
-        # ➕ 印出 debug log
-        print(f"[DEBUG] 使用者輸入：{message_text}")
-        print(f"[DEBUG] AI 回傳：{name}")
-        print(f"[DEBUG] 是否在名單中：{name in all_names}")
-
-        if name in all_names:
-            return name
+        # 模糊比對：找最接近的學生姓名
+        matched = get_close_matches(name_raw, all_names, n=1, cutoff=0.6)
+        if matched:
+            print(f"[DEBUG] 原始輸入：{message_text}")
+            print(f"[DEBUG] AI 回傳：{name_raw}")
+            print(f"[DEBUG] 模糊比對成功：{matched[0]}")
+            return matched[0]
         else:
+            print(f"[DEBUG] 模糊比對失敗：{name_raw} 不存在")
             return None
 
     except Exception as e:
