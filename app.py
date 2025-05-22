@@ -55,10 +55,10 @@ def identify_student_name(message_text):
             except Exception as e:
                 print(f"[錯誤] 讀取 {filename} 時發生錯誤：{e}")
 
-    # 去除重複姓名
+    # 去除重複
     all_names = list(set(all_names))
 
-    # 建 AI Prompt，要求從名單中挑出最可能的學生姓名
+    # 建 Prompt
     prompt = f"""以下是家長的話語：「{message_text}」
 請從中找出提到的學生姓名。以下是已知的學生名單：
 {', '.join(all_names)}
@@ -71,7 +71,11 @@ def identify_student_name(message_text):
         response = model.generate_content(prompt)
         name = response.text.strip()
 
-        # 回傳結果是否在名單中
+        # ➕ 印出 debug log
+        print(f"[DEBUG] 使用者輸入：{message_text}")
+        print(f"[DEBUG] AI 回傳：{name}")
+        print(f"[DEBUG] 是否在名單中：{name in all_names}")
+
         if name in all_names:
             return name
         else:
@@ -80,6 +84,7 @@ def identify_student_name(message_text):
     except Exception as e:
         print("辨識學生姓名錯誤：", e)
         return None
+
 
 
 # 修改後的主邏輯
