@@ -3,62 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>上傳班級成績單</title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #1e40af;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: 2rem auto;
-      background-color: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    input[type="file"] {
-      margin-top: 1rem;
-    }
-
-    button {
-      margin-top: 1.5rem;
-      background-color: #2563eb;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .success {
-      margin-top: 1rem;
-      color: green;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='teacher_style.css') }}">
 </head>
 <body>
 
 <header>
-    <link rel="stylesheet" href="/static/teacher_style.css">
-
   <h1>上傳班級成績單</h1>
 </header>
 
 <div class="container">
   <form method="POST" enctype="multipart/form-data">
-    <label for="file">請選擇 Excel 檔案 (.xlsx)：</label><br>
-    <input type="file" name="file" accept=".xlsx" required><br>
+    <label for="file">請選擇 Excel 檔案 (.xlsx)：</label>
+    <input type="file" name="file" accept=".xlsx" required>
+    
     <button type="submit">上傳</button>
 
     {% if success %}
@@ -66,6 +23,7 @@
     {% endif %}
   </form>
 </div>
+
 <div style="text-align: center;">
   <a href="/teacher_dashboard" class="back-home">🔙 回教師首頁</a>
 </div>

@@ -13,23 +13,29 @@
 
 <div class="container">
   <form method="POST">
-    <label for="class">選擇班級：</label>
-    <select id="class" name="class" required>
-      <option value="">請選擇班級</option>
-      <option value="1A">1A</option>
-      <option value="2B">2B</option>
-      <option value="3C">3C</option>
-    </select>
+    <div>
+      <label for="class">選擇班級：</label>
+      <select id="class" name="class" required>
+        <option value="">請選擇班級</option>
+        <option value="1A">1A</option>
+        <option value="2B">2B</option>
+        <option value="3C">3C</option>
+      </select>
+    </div>
 
-    <label for="name">選擇學生：</label>
-    <select id="name" name="name" required>
-      <option value="">請選擇學生</option>
-      <option value="林小美">林小美</option>
-      <option value="王小明">王小明</option>
-    </select>
+    <div>
+      <label for="name">選擇學生：</label>
+      <select id="name" name="name" required>
+        <option value="">請選擇學生</option>
+        <option value="林小美">林小美</option>
+        <option value="王小明">王小明</option>
+      </select>
+    </div>
 
-    <label for="comment">評語內容：</label>
-    <textarea id="comment" name="comment" rows="6" required></textarea>
+    <div>
+      <label for="comment">評語內容：</label>
+      <textarea id="comment" name="comment" rows="6" required></textarea>
+    </div>
 
     <button type="submit">送出評語</button>
 

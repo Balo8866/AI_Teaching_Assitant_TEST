@@ -82,3 +82,50 @@ button:hover {
   margin: 2rem auto;
   text-align: center;
 }
+
+
+/* 功能選單大按鈕 */
+a.button {
+  display: block;
+  background-color: #2563eb;
+  color: white;
+  padding: 1rem;
+  margin: 1rem auto;
+  text-decoration: none;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 300px;
+  font-size: 1.1rem;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+a.button:hover {
+  background-color: #1d4ed8;
+}
+
+/* 表格樣式 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+th, td {
+  border: 1px solid #d1d5db;
+  padding: 0.6rem;
+  text-align: center;
+}
+
+th {
+  background-color: #f0f4f8;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* 檔案上傳樣式 */
+input[type="file"] {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
