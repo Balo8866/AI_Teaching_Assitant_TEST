@@ -12,44 +12,47 @@
 </header>
 
 <div class="container">
-<form method="POST">
-  <label for="class_name">請選擇班級：</label>
-  <select name="class_name" id="class_name" required>
-    <option value="">請選擇班級</option>
-    <option value="1A" {% if selected_class == '1A' %}selected{% endif %}>1A</option>
-    <option value="2B" {% if selected_class == '2B' %}selected{% endif %}>2B</option>
-    <option value="3C" {% if selected_class == '3C' %}selected{% endif %}>3C</option>
-  </select>
-  <button type="submit" name="action" value="load">查詢</button>
-</form>
+  <form method="POST">
+    <label for="class_name">請選擇班級：</label>
+    <select name="class_name" id="class_name" required>
+      <option value="">請選擇班級</option>
+      {% for cls in class_list %}
+        <option value="{{ cls }}" {% if selected_class == cls %}selected{% endif %}>{{ cls }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" name="action" value="load">查詢</button>
+  </form>
 
-{% if df %}
-<form method="POST">
-  <input type="hidden" name="class_name" value="{{ selected_class }}">
-  <table>
-    <thead>
-      <tr>
-        {% for col in df.columns %}
-          <th>{{ col }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for i, row in df.iterrows() %}
+  {% if error %}
+    <p class="error">{{ error }}</p>
+  {% endif %}
+
+  {% if df is not none and not df.empty %}
+  <form method="POST">
+    <input type="hidden" name="class_name" value="{{ selected_class }}">
+    <table>
+      <thead>
         <tr>
           {% for col in df.columns %}
-            <td>
-              <input type="text" name="cell_{{ i }}_{{ col }}" value="{{ row[col] }}">
-            </td>
+            <th>{{ col }}</th>
           {% endfor %}
         </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <button type="submit" name="action" value="save">💾 儲存修改</button>
-</form>
-{% endif %}
-
+      </thead>
+      <tbody>
+        {% for i, row in df.iterrows() %}
+          <tr>
+            {% for col in df.columns %}
+              <td>
+                <input type="text" name="cell_{{ i }}_{{ col }}" value="{{ row[col] }}">
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" name="action" value="save">💾 儲存修改</button>
+  </form>
+  {% endif %}
 </div>
 
 <div style="text-align: center;">

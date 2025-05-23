@@ -230,14 +230,20 @@ def view_class_scores():
     df = None
     selected_class = None
 
+    # ⬇️ 動態讀取班級清單
+    class_list = []
+    for filename in os.listdir("data"):
+        if filename.endswith(".xlsx") and filename.startswith("class_"):
+            class_name = filename.replace("class_", "").replace(".xlsx", "")
+            class_list.append(class_name)
+
     if request.method == 'POST':
         action = request.form.get("action")
-        class_name = request.form.get("class_name")
-        file_path = f"data/class_{class_name}.xlsx"
-        selected_class = class_name
+        selected_class = request.form.get("class_name")
+        file_path = f"data/class_{selected_class}.xlsx"
 
         if not os.path.exists(file_path):
-            error = f"找不到班級 {class_name} 的成績檔案。"
+            error = f"找不到班級 {selected_class} 的成績檔案。"
         else:
             if action == "load":
                 df = pd.read_excel(file_path)
@@ -253,7 +259,7 @@ def view_class_scores():
                 df = pd.DataFrame(new_data)
                 df.to_excel(file_path, index=False)
 
-    return render_template("view_class_scores.html", df=df, error=error, selected_class=selected_class)
+    return render_template("view_class_scores.html", df=df, error=error, selected_class=selected_class, class_list=class_list)
 
 
 
