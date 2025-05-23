@@ -2,6 +2,8 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="/static/teacher_style.css">
+
   <title>查詢班級成績</title>
   <style>
     body {
@@ -72,6 +74,9 @@
   {% if table_html %}
     {{ table_html | safe }}
   {% endif %}
+</div>
+<div style="text-align: center;">
+  <a href="/teacher_dashboard" class="back-home">🔙 回教師首頁</a>
 </div>
 
 </body>

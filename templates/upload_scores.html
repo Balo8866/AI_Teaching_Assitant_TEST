@@ -50,6 +50,8 @@
 <body>
 
 <header>
+    <link rel="stylesheet" href="/static/teacher_style.css">
+
   <h1>上傳班級成績單</h1>
 </header>
 
@@ -63,6 +65,9 @@
       <p class="success">✅ 已成功上傳 {{ filename }}</p>
     {% endif %}
   </form>
+</div>
+<div style="text-align: center;">
+  <a href="/teacher_dashboard" class="back-home">🔙 回教師首頁</a>
 </div>
 
 </body>
