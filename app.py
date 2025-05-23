@@ -226,20 +226,34 @@ def upload_scores():
 
 @app.route("/view_class_scores", methods=['GET', 'POST'])
 def view_class_scores():
-    table_html = ""
     error = None
+    df = None
+    selected_class = None
 
     if request.method == 'POST':
-        class_name = request.form['class_name']
+        action = request.form.get("action")
+        class_name = request.form.get("class_name")
         file_path = f"data/class_{class_name}.xlsx"
+        selected_class = class_name
 
-        if os.path.exists(file_path):
-            df = pd.read_excel(file_path)
-            table_html = df.to_html(index=False)
-        else:
+        if not os.path.exists(file_path):
             error = f"找不到班級 {class_name} 的成績檔案。"
+        else:
+            if action == "load":
+                df = pd.read_excel(file_path)
+            elif action == "save":
+                df_old = pd.read_excel(file_path)
+                new_data = []
+                for i in range(len(df_old)):
+                    row_data = {}
+                    for col in df_old.columns:
+                        key = f"cell_{i}_{col}"
+                        row_data[col] = request.form.get(key)
+                    new_data.append(row_data)
+                df = pd.DataFrame(new_data)
+                df.to_excel(file_path, index=False)
 
-    return render_template("view_class_scores.html", table_html=table_html, error=error)
+    return render_template("view_class_scores.html", df=df, error=error, selected_class=selected_class)
 
 
 

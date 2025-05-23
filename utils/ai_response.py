@@ -10,7 +10,7 @@ def generate_reply(student_data):
         return "很抱歉，查無此學生資料，請確認姓名是否正確輸入。"
 
     student_info = "\n".join(f"{k}: {v}" for k, v in student_data.items())
-    prompt = f"請根據以下學生資料，簡單分析其學習與生活狀況，並給出簡短建議：\n\n{student_info}"
+    prompt = f"你是一名老師的助教，負責幫助老師回應關心學生的家長，請根據以下學生資料，簡單分析其學習與生活狀況，並給出簡短建議：\n\n{student_info}"
 
     try:
         # ✅ 改為使用 Flash 模型 + generate_content()
