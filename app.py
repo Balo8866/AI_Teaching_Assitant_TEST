@@ -15,6 +15,12 @@ from utils.data_handler import query_student
 from difflib import get_close_matches
 
 
+from auth_manager import (
+    bind_user, unbind_user,
+    get_bound_student, is_test_user
+)
+
+
 # 載入 .env
 load_dotenv()
 
@@ -107,19 +113,50 @@ def identify_student_name(message_text):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     message_text = event.message.text.strip()
+    user_id = event.source.user_id
 
-    # 使用 AI 辨識名字
-    name = identify_student_name(message_text)
+    # ✅ 處理登出
+    if message_text == "登出":
+        unbind_user(user_id)
+        reply = "✅ 您已成功登出，如需查詢成績，請重新輸入「學號 姓名」驗證。"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
+        return
 
-    if name:
-        student_data = query_student(name)
-        if isinstance(student_data, str) and "查無" in student_data:
-            reply = f"查無 {name} 的資料，請確認姓名是否正確。"
+    # ✅ 若為測試帳號或已驗證
+    bound = get_bound_student(user_id)
+    if is_test_user(user_id) or bound:
+
+        # 測試帳號直接啟用 AI 模式
+        if is_test_user(user_id):
+            reply = analyze_question_with_data(message_text)
+
         else:
-            reply = generate_reply(student_data)
+            # 只允許查詢該學生
+            if bound["name"] in message_text or bound["id"] in message_text:
+                student_data = query_student(bound["name"])
+                if isinstance(student_data, str) and "查無" in student_data:
+                    reply = f"查無 {bound['name']} 的資料，請確認姓名是否正確。"
+                else:
+                    reply = generate_reply(student_data)
+            else:
+                reply = f"⚠️ 僅允許查詢 {bound['name']} 的資料，如需查詢其他人請先登出。"
+
     else:
-        # 若辨識不到名字，改用「問題分析模式」
-        reply = analyze_question_with_data(message_text)
+        # 若格式正確（學號+姓名）
+        parts = message_text.split()
+        if len(parts) == 2:
+            student_id, student_name = parts
+            result = query_student(student_name)
+            if isinstance(result, dict):  # 查到資料才綁定
+                bind_user(user_id, student_id, student_name)
+                reply = f"✅ 驗證成功，您可查詢 {student_name} 的資料。"
+            else:
+                reply = "❌ 驗證失敗，請確認學號與姓名是否正確。"
+        else:
+            reply = (
+                "👋 歡迎使用學生成績查詢系統，請先完成身份驗證。\n"
+                "請輸入「學號 姓名」，例如：A001 吳志強"
+            )
 
     line_bot_api.reply_message(
         event.reply_token,
