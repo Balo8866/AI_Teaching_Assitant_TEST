@@ -181,16 +181,28 @@ from datetime import date
 def write_comment():
     saved = False
     name = None
+
+    # 🔸 讀取所有班級與學生名單
+    student_data = {}
+    for filename in os.listdir("data"):
+        if filename.endswith(".xlsx"):
+            class_name = filename.replace("class_", "").replace(".xlsx", "")
+            df = pd.read_excel(os.path.join("data", filename))
+            if "姓名" in df.columns:
+                student_data[class_name] = df["姓名"].dropna().tolist()
+
     if request.method == 'POST':
         name = request.form['name']
         comment = request.form['comment']
         today = date.today().isoformat()
-        path = f"notes/{name}_{today}.txt"
         os.makedirs("notes", exist_ok=True)
+        path = f"notes/{name}_{today}.txt"
         with open(path, "w", encoding="utf-8") as f:
             f.write(comment)
         saved = True
-    return render_template("write_comment.html", saved=saved, name=name)
+
+    return render_template("write_comment.html", saved=saved, name=name, student_data=student_data)
+
 
 @app.route("/teacher_dashboard")
 def teacher_dashboard():

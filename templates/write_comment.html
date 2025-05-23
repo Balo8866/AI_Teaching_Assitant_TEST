@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/static/teacher_style.css">
   <title>撰寫學生評語</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='teacher_style.css') }}">
 </head>
 <body>
 
@@ -17,18 +17,16 @@
       <label for="class">選擇班級：</label>
       <select id="class" name="class" required>
         <option value="">請選擇班級</option>
-        <option value="1A">1A</option>
-        <option value="2B">2B</option>
-        <option value="3C">3C</option>
+        {% for cls in student_data.keys() %}
+          <option value="{{ cls }}">{{ cls }}</option>
+        {% endfor %}
       </select>
     </div>
 
     <div>
       <label for="name">選擇學生：</label>
       <select id="name" name="name" required>
-        <option value="">請選擇學生</option>
-        <option value="林小美">林小美</option>
-        <option value="王小明">王小明</option>
+        <option value="">請先選擇班級</option>
       </select>
     </div>
 
@@ -48,6 +46,33 @@
 <div style="text-align: center;">
   <a href="/teacher_dashboard" class="back-home">🔙 回教師首頁</a>
 </div>
+
+<!-- 安全嵌入 JSON 資料 -->
+<script id="student-data" type="application/json">
+  {{ student_data | tojson | safe }}
+</script>
+
+<script type="text/javascript">
+  const studentData = JSON.parse(document.getElementById("student-data").textContent);
+  const classSelect = document.getElementById("class");
+  const nameSelect = document.getElementById("name");
+
+  classSelect.addEventListener("change", () => {
+    const selectedClass = classSelect.value;
+    nameSelect.innerHTML = '<option value="">請選擇學生</option>';
+    if (studentData[selectedClass]) {
+      studentData[selectedClass].forEach(student => {
+        const opt = document.createElement("option");
+        opt.value = student;
+        opt.textContent = student;
+        nameSelect.appendChild(opt);
+      });
+    }
+  });
+</script>
+
+
+
 
 </body>
 </html>
