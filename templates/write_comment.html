@@ -3,58 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/static/teacher_style.css">
-
   <title>撰寫學生評語</title>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f8fafc;
-      padding: 0;
-      margin: 0;
-    }
-    header {
-      background-color: #0f172a;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    .container {
-      max-width: 600px;
-      margin: 2rem auto;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      margin-top: 1.5rem;
-      background-color: #2563eb;
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    .success {
-      margin-top: 1rem;
-      color: green;
-    }
-  </style>
 </head>
 <body>
 
@@ -64,8 +13,20 @@
 
 <div class="container">
   <form method="POST">
-    <label for="name">學生姓名：</label>
-    <input type="text" id="name" name="name" required>
+    <label for="class">選擇班級：</label>
+    <select id="class" name="class" required>
+      <option value="">請選擇班級</option>
+      <option value="1A">1A</option>
+      <option value="2B">2B</option>
+      <option value="3C">3C</option>
+    </select>
+
+    <label for="name">選擇學生：</label>
+    <select id="name" name="name" required>
+      <option value="">請選擇學生</option>
+      <option value="林小美">林小美</option>
+      <option value="王小明">王小明</option>
+    </select>
 
     <label for="comment">評語內容：</label>
     <textarea id="comment" name="comment" rows="6" required></textarea>
@@ -77,6 +38,7 @@
     {% endif %}
   </form>
 </div>
+
 <div style="text-align: center;">
   <a href="/teacher_dashboard" class="back-home">🔙 回教師首頁</a>
 </div>
