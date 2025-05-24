@@ -61,12 +61,12 @@ def analyze_question_with_data(question_text, default_student=None):
 
         # 🧠 3. 建立 Gemini 分析 Prompt
         prompt = f"""
-你是一位智慧型學習助理。請根據以下資料幫助回答家長的提問，並以清楚、親切、簡潔的方式回覆。
+你是一位智慧型學習助理。請根據以下資料幫助老師回答家長的提問，並以清楚、親切、簡潔的方式回覆。
 
-📌【請務必聚焦回答問題的重點，不需要額外補充未被詢問的資訊】
+📌【請務必聚焦回答問題的重點】
 - 若提問與「出缺席」有關，只需說明學生的出缺席狀況（例如：缺席次數、是否規律）。
 - 若提問與「成績」或「學習狀況」有關，只需簡要指出各科成績情況即可，可以給予學習習慣或建議。
-- 若提問與「在學情況」或「生活狀況」有關，請只說明相關內容。
+- 若提問與「在學情況」或「生活狀況」有關，可以根據評語和缺席回答相關內容。
 - 若提問與「以上三個狀況」無關，請根據資料簡要回答。
 
 【家長提問】
@@ -78,7 +78,6 @@ def analyze_question_with_data(question_text, default_student=None):
 【老師撰寫的學生評語】
 {notes_combined}
 
-請以條列式或一段話，簡潔回覆，不要多餘分析。
 """
 
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
