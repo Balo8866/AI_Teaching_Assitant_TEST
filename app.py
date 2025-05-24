@@ -132,8 +132,12 @@ def handle_message(event):
         if is_test_user(user_id):
             reply = analyze_question_with_data(message_text)
         else:
-        # 直接傳入綁定學生姓名讓 AI 分析
-            reply = analyze_question_with_data(message_text, default_student=bound["name"])
+        # 僅允許查詢綁定學生
+            if bound["name"] in message_text or bound["id"] in message_text:
+                reply = analyze_question_with_data(message_text, default_student=bound["name"])
+            else:
+                reply = f"⚠️ 僅允許查詢 {bound['name']} 的資料，如需查詢其他人請先登出。"
+
 
 
     else:
