@@ -121,7 +121,7 @@ def handle_message(event):
         unbind_user(user_id)
         reply = "✅ 已為您結束查詢並登出，如需查詢其他學生請重新輸入「學號 姓名」進行驗證。"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
-    return
+        return
 
 
     # ✅ 若為測試帳號或已驗證
