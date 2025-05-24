@@ -115,12 +115,14 @@ def handle_message(event):
     message_text = event.message.text.strip()
     user_id = event.source.user_id
 
-    # ✅ 處理登出
-    if message_text == "登出":
+# 自動登出關鍵字
+    logout_keywords = ["我沒有想問", "我沒有其他問題", "沒事了", "沒有問題", "結束", "不用了"]
+    if any(keyword in message_text for keyword in logout_keywords):
         unbind_user(user_id)
-        reply = "✅ 您已成功登出，如需查詢成績，請重新輸入「學號 姓名」驗證。"
+        reply = "✅ 已為您結束查詢並登出，如需查詢其他學生請重新輸入「學號 姓名」進行驗證。"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply))
-        return
+    return
+
 
     # ✅ 若為測試帳號或已驗證
     bound = get_bound_student(user_id)
