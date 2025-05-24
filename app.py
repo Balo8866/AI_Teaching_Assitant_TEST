@@ -116,7 +116,7 @@ def handle_message(event):
     user_id = event.source.user_id
 
 # 自動登出關鍵字
-    logout_keywords = ["我沒有想問", "我沒有其他問題", "沒事了", "沒有問題", "結束", "不用了"]
+    logout_keywords = ["我沒有想問", "我沒有其他問題", "沒事了", "沒有問題", "結束", "不用了", "登出", "我問完了"]
     if any(keyword in message_text for keyword in logout_keywords):
         unbind_user(user_id)
         reply = "✅ 已為您結束查詢並登出，如需查詢其他學生請重新輸入「學號 姓名」進行驗證。"
