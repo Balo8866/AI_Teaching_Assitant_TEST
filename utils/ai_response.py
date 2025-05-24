@@ -59,6 +59,7 @@ def analyze_question_with_data(question_text):
         # 🧠 3. 建立 Gemini 分析 Prompt
         prompt = f"""
 你是一位智慧型學習助理。請根據以下資料幫助回答家長的提問，並以清楚、親切的方式回覆。
+請務必聚焦回答問題的重點，例如：若家長詢問出缺席、成績、交友、老師評語，請優先找出相關資訊來回答。
 
 【家長提問】
 {question_text}
