@@ -129,17 +129,10 @@ def handle_message(event):
         # 測試帳號直接啟用 AI 模式
         if is_test_user(user_id):
             reply = analyze_question_with_data(message_text)
-
         else:
-            # 只允許查詢該學生
-            if bound["name"] in message_text or bound["id"] in message_text:
-                student_data = query_student(bound["name"])
-                if isinstance(student_data, str) and "查無" in student_data:
-                    reply = f"查無 {bound['name']} 的資料，請確認姓名是否正確。"
-                else:
-                    reply = generate_reply(student_data)
-            else:
-                reply = f"⚠️ 僅允許查詢 {bound['name']} 的資料，如需查詢其他人請先登出。"
+        # 直接傳入綁定學生姓名讓 AI 分析
+            reply = analyze_question_with_data(message_text, default_student=bound["name"])
+
 
     else:
         # 若格式正確（學號+姓名）

@@ -22,9 +22,12 @@ def generate_reply(student_data):
         return "目前 AI 回應配額已用完或服務異常，請稍後再試。"
 
 # 這段程式碼是用來處理家長的提問，並根據學生的成績和老師的評語進行分析
-
-def analyze_question_with_data(question_text):
+def analyze_question_with_data(question_text, default_student=None):
     try:
+        # 🔍 若使用者沒有在問題中明確提及學生姓名，則自動補上綁定學生
+        if default_student and default_student not in question_text:
+            question_text = f"{default_student}：{question_text}"
+
         # 🔍 1. 統整所有 Excel 成績
         all_scores = []
         for filename in os.listdir("data"):
@@ -58,8 +61,13 @@ def analyze_question_with_data(question_text):
 
         # 🧠 3. 建立 Gemini 分析 Prompt
         prompt = f"""
-你是一位智慧型學習助理。請根據以下資料幫助回答家長的提問，並以清楚、親切的方式回覆。
-請務必聚焦回答問題的重點，例如：若家長詢問出缺席、成績、交友、老師評語，請優先找出相關資訊來回答。
+你是一位智慧型學習助理。請根據以下資料幫助回答家長的提問，並以清楚、親切、簡潔的方式回覆。
+
+📌【請務必聚焦回答問題的重點，不需要額外補充未被詢問的資訊】
+- 若提問與「出缺席」有關，只需說明學生的出缺席狀況（例如：缺席次數、是否規律）。
+- 若提問與「成績」有關，只需簡要指出各科成績情況即可，不需分析學習習慣或建議。
+- 若提問與「評語」或「生活狀況」有關，請只說明相關內容。
+- 禁止回答與提問無關的內容或延伸建議。
 
 【家長提問】
 {question_text}
@@ -70,7 +78,7 @@ def analyze_question_with_data(question_text):
 【老師撰寫的學生評語】
 {notes_combined}
 
-請用條列或自然語句回答。
+請以條列式或一段話，簡潔回覆，不要多餘分析。
 """
 
         model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
